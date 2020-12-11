@@ -41,6 +41,7 @@ func main() {
 			}
 		}
 	}
+	// input file doesn't end in a newline
 	passports = append(passports, *currentPassport)
 	
 	part1(passports)
