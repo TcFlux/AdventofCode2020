@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -25,7 +26,7 @@ func main() {
 	}
 
 	part1(rules)
-	// part2(rules)
+	part2(rules)
 }
 
 func part1(rules map[string][]string) {
@@ -68,12 +69,37 @@ func containsShinyGold(bagType string, rules map[string][]string, bagMemo map[st
 	return false, bagMemo
 }
 
-func parseBag(bagText string) (string, string) {
+func part2(rules map[string][]string) {
+	count := countInnerBags("shiny gold", rules)
+
+	fmt.Printf("A shiny gold bag contains %d individual bags in part 2\n", count)
+}
+
+func countInnerBags(bagType string, rules map[string][]string) int {
+	count := 0
+	for _, innerBag := range rules[bagType] {
+		quantity, innerType := parseBag(innerBag)
+		innerCount := countInnerBags(innerType, rules)
+		if innerCount > 0 {
+			count += quantity * innerCount + quantity
+		} else {
+			count += quantity
+		}
+		// fmt.Println(int(count))
+	}
+
+	return count
+}
+
+func parseBag(bagText string) (int, string) {
 	bagData := strings.Split(bagText, " ")
 	if len(bagData) == 3 {
-		return "0", ""
+		return 0, ""
 	} else {
-		quantity := bagData[0]
+		quantity, err := strconv.Atoi(bagData[0])
+		if err != nil {
+			log.Fatal(err)
+		}
 		bagType := fmt.Sprintf("%s %s", bagData[1], bagData[2])
 		return quantity, bagType
 	}
