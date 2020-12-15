@@ -19,7 +19,7 @@ func main() {
 	
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		bagType, contents := strings.Split(scanner.Text(), "contain ")[0], strings.Split(scanner.Text(), "contain ")[1]
+		bagType, contents := strings.Split(scanner.Text(), " bags contain ")[0], strings.Split(scanner.Text(), " bags contain ")[1]
 		contentsList := strings.Split(strings.Trim(contents, "."), ", ")
 		rules[bagType] = contentsList
 	}
@@ -36,13 +36,10 @@ func part1(rules map[string][]string) {
 	for bagType, _ := range rules {
 		hasGold, bagMemo = containsShinyGold(bagType, rules, bagMemo)
 		if hasGold {
-			// fmt.Println(bagType, hasGold)
 			count += 1
 		}
 		hasGold = false
 	}
-
-	// fmt.Printf("%+v\n", bagMemo)
 
 	fmt.Printf("There are %d bag colors that contain atleast one shiny gold bag in part 1\n", count)
 }
@@ -56,11 +53,9 @@ func containsShinyGold(bagType string, rules map[string][]string, bagMemo map[st
 		if innerType == "" {
 			bagMemo[innerType] = false
 		} else if innerType == "shiny gold" {
-			bagMemo[innerType] = true
 			bagMemo[bagType] = true
 			return true, bagMemo
 		} else {
-			fmt.Println(bagType)
 			containsGold := false
 			containsGold, bagMemo = containsShinyGold(innerType, rules, bagMemo)
 			bagMemo[innerType] = containsGold
